@@ -70,11 +70,10 @@ export default function VitalCard({
       return;
     }
 
-    if (lower.includes("enter")) {
+    if (lower.includes("submit")) {
       newValue = newValue.replace(/submit/gi, "");
       setValue(newValue.trim());
       submitValue();
-      setValue("");
       resetTranscript();
       return;
     }
@@ -88,6 +87,13 @@ export default function VitalCard({
       newValue = newValue.replace(/clear/gi, "");
       setValue("");
       resetTranscript();
+      return;
+    }
+
+    if (lower.includes("start")) {
+      newValue = newValue.replace(/start/gi, "");
+      resetTranscript();
+      SpeechRecognition.startListening({ continuous: true });
       return;
     }
 
@@ -164,7 +170,7 @@ export default function VitalCard({
 
         <div className="mt-4">
           <p className="text-sm text-gray-500">
-            Voice Commands: "Clear", "Enter", "Skip", "Pause"
+            Voice Commands: "Clear", "Submit", "Skip", "Pause", "Start"
           </p>
         </div>
 

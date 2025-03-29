@@ -10,6 +10,7 @@ const Home = () => {
     const [activeFeature, setActiveFeature] = useState(null);
     const [showVitals, setShowVitals] = useState(false);
     const [currentVital, setCurrentVital] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
     const [vitalsData, setVitalsData] = useState({
         patientId: "",
         temperature: "",
@@ -217,7 +218,7 @@ const Home = () => {
                                     placeholder={currentVital.placeholder}
                                     instruction={currentVital.instruction}
                                     onSubmit={handleVitalSubmit}
-                                    isLoading={isLoading}
+                                    isLoading={false}
                                     buttonText="Save and Continue"
                                     loadingText="Saving..."
                                 />
