@@ -10,11 +10,14 @@ const Home = () => {
     const [currentVital, setCurrentVital] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [vitalsData, setVitalsData] = useState({
+        patientId: "",
         temperature: "",
         heartRate: "",
-        bloodPressure: "",
         respiratoryRate: "",
-        oxygenSaturation: ""
+        systolicPressure: "",
+        diastolicPressure: "",
+        o2Sat: "",
+        glucose: ""
     });
 
     // fade in effect
@@ -60,6 +63,12 @@ const Home = () => {
 
     const vitals = [
         {
+            id: "patientId",
+            title: "Patient ID",
+            placeholder: "Enter patient ID",
+            instruction: "Enter the patient's identification number."
+        },
+        {
             id: "temperature",
             title: "Temperature",
             placeholder: "98.6",
@@ -72,22 +81,34 @@ const Home = () => {
             instruction: "Record the patient's heart rate in beats per minute."
         },
         {
-            id: "bloodPressure",
-            title: "Blood Pressure",
-            placeholder: "120/80",
-            instruction: "Record the patient's blood pressure in mmHg."
-        },
-        {
             id: "respiratoryRate",
             title: "Respiratory Rate",
             placeholder: "16",
             instruction: "Record the patient's respiratory rate in breaths per minute."
         },
         {
-            id: "oxygenSaturation",
+            id: "systolicPressure",
+            title: "Systolic Pressure",
+            placeholder: "120",
+            instruction: "Record the patient's systolic blood pressure in mmHg."
+        },
+        {
+            id: "diastolicPressure",
+            title: "Diastolic Pressure",
+            placeholder: "80",
+            instruction: "Record the patient's diastolic blood pressure in mmHg."
+        },
+        {
+            id: "o2Sat",
             title: "Oxygen Saturation",
             placeholder: "98",
             instruction: "Record the patient's oxygen saturation as a percentage."
+        },
+        {
+            id: "glucose",
+            title: "Glucose",
+            placeholder: "100",
+            instruction: "Record the patient's blood glucose level in mg/dL."
         }
     ];
 
@@ -112,14 +133,44 @@ const Home = () => {
             if (currentIndex < vitals.length - 1) {
                 setCurrentVital(vitals[currentIndex + 1]);
             } else {
-                // Completed all vitals
-                setCurrentVital(null);
-                alert("All vitals recorded successfully!");
-                setShowVitals(false);
+                // Show summary
+                setCurrentVital({ id: "summary", title: "Summary", instruction: "Review of recorded vitals" });
             }
             
             setIsLoading(false);
         }, 1000);
+    };
+
+    // Handle when user wants to go back to home from summary
+    const handleBackToHome = () => {
+        setShowVitals(false);
+        setCurrentVital(null);
+    };
+
+    // Render summary component
+    const renderSummary = () => {
+        return (
+            <div className="p-4">
+                <h2 className="text-xl font-semibold mb-4">Patient Vitals Summary</h2>
+                <div className="space-y-2">
+                    <p><span className="font-medium">Patient ID:</span> {vitalsData.patientId}</p>
+                    <p><span className="font-medium">Temperature:</span> {vitalsData.temperature} °F</p>
+                    <p><span className="font-medium">Heart Rate:</span> {vitalsData.heartRate} bpm</p>
+                    <p><span className="font-medium">Respiratory Rate:</span> {vitalsData.respiratoryRate} breaths/min</p>
+                    <p><span className="font-medium">Blood Pressure:</span> {vitalsData.systolicPressure}/{vitalsData.diastolicPressure} mmHg</p>
+                    <p><span className="font-medium">O₂ Saturation:</span> {vitalsData.o2Sat}%</p>
+                    <p><span className="font-medium">Glucose:</span> {vitalsData.glucose} mg/dL</p>
+                </div>
+                <div className="mt-6">
+                    <button 
+                        onClick={handleBackToHome}
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300"
+                    >
+                        Complete and Return to Home
+                    </button>
+                </div>
+            </div>
+        );
     };
 
     return (
@@ -131,7 +182,6 @@ const Home = () => {
                         <p className="mission">Enhancing patient care by simplifying vitals tracking for nurses</p>
                         <button onClick={handleGetStarted} className="cta-button">Get Started</button>
                     </section>
-
 
                     <section className="features">
                         <h2 className="features-title">How Build4Nurse Helps You</h2>
@@ -160,27 +210,33 @@ const Home = () => {
                     <div className="vitals-card">
                         <h1 className="text-center text-2xl font-bold mb-6 text-blue-600">Patient Vitals Tracking</h1>
                         
-                        {currentVital && (
-                            <VitalCard
-                                id={currentVital.id}
-                                title={currentVital.title}
-                                placeholder={currentVital.placeholder}
-                                instruction={currentVital.instruction}
-                                onSubmit={handleVitalSubmit}
-                                isLoading={isLoading}
-                                buttonText="Save and Continue"
-                                loadingText="Saving..."
-                            />
+                        {currentVital && currentVital.id === "summary" ? (
+                            renderSummary()
+                        ) : (
+                            currentVital && (
+                                <VitalCard
+                                    id={currentVital.id}
+                                    title={currentVital.title}
+                                    placeholder={currentVital.placeholder}
+                                    instruction={currentVital.instruction}
+                                    onSubmit={handleVitalSubmit}
+                                    isLoading={isLoading}
+                                    buttonText="Save and Continue"
+                                    loadingText="Saving..."
+                                />
+                            )
                         )}
                         
-                        <div className="mt-4 text-center">
-                            <button 
-                                onClick={() => setShowVitals(false)} 
-                                className="text-blue-600 hover:underline"
-                            >
-                                Back to Home
-                            </button>
-                        </div>
+                        {currentVital && currentVital.id !== "summary" && (
+                            <div className="mt-4 text-center">
+                                <button 
+                                    onClick={handleBackToHome} 
+                                    className="text-blue-600 hover:underline"
+                                >
+                                    Back to Home
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
