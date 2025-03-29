@@ -29,9 +29,9 @@ export default function VitalCard({
   };
 
   return (
-    <div className="border rounded-lg p-6 shadow-sm bg-white">
-      <h2 className="text-xl font-medium mb-3">{title}</h2>
-      {instruction && <p className="text-gray-600 mb-4">{instruction}</p>}
+    <div className="bg-white/90 p-6">
+      <h2 className="text-xl font-medium mb-3 text-blue-700">{title}</h2>
+      {instruction && <p className="text-gray-700 mb-4">{instruction}</p>}
       
       <form onSubmit={handleSubmit} className="space-y-5">
         <InputContainer
@@ -47,6 +47,7 @@ export default function VitalCard({
           isLoading={isLoading}
           text={buttonText}
           loadingText={loadingText}
+          className="bg-blue-600 hover:bg-blue-700 transition-colors"
         />
       </form>
     </div>
