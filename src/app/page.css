@@ -1,5 +1,9 @@
+/* Import modern Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
 .home {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Poppins', sans-serif;
     color: #333;
     line-height: 1.6;
     display: flex;
@@ -37,12 +41,16 @@
 }
 
 .hero h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
     font-size: 4rem;
     margin-bottom: 1.5rem;
     color: white;
+    letter-spacing: -0.5px;
 }
 
 .hero p {
+    font-weight: 300;
     font-size: 1.5rem;
     margin-bottom: 3rem;
     color: white;
@@ -55,16 +63,19 @@
     background-color: #fff;
     color: #1E88E5;
     text-decoration: none;
-    border-radius: 5px;
-    font-weight: bold;
-    transition: background-color 0.3s, color 0.3s;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
     border: 1px solid #f0f0f0;
     font-size: 1.2rem;
     cursor: pointer;
+    letter-spacing: 0.5px;
 }
 
 .cta-button:hover {
     background-color: #f1f1f1;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .stats {
@@ -76,6 +87,9 @@
 
 .stats .features-title {
     color: #1E88E5;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.3px;
 }
 
 .stat-container {
@@ -90,7 +104,7 @@
     margin: 2rem;
     padding: 2rem;
     background-color: white;
-    border-radius: 10px;
+    border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     width: 250px;
     transition: all 0.3s ease;
@@ -102,6 +116,8 @@
 }
 
 .stat-item h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
     font-size: 3.5rem;
     color: #1E88E5;
     margin-bottom: 1rem;
@@ -109,6 +125,7 @@
 
 .stat-item p {
     font-size: 1.2rem;
+    font-weight: 500;
 }
 
 .features {
@@ -122,6 +139,9 @@
     margin-bottom: 3rem;
     font-size: 2.5rem;
     color: #1E88E5;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.3px;
 }
 
 .features-container {
@@ -138,7 +158,7 @@
     margin: 1.5rem;
     padding: 2.5rem;
     background-color: #f1f8fe; 
-    border-radius: 10px;
+    border-radius: 12px;
     transition: all 0.3s ease;
     cursor: pointer;
     height: 300px;
@@ -159,6 +179,8 @@
 }
 
 .feature h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
     font-size: 1.8rem;
     color: #1565C0; /* Darker blue for contrast */
     margin-bottom: 1.5rem;
@@ -167,6 +189,7 @@
 .feature p {
     font-size: 1.1rem;
     line-height: 1.7;
+    font-weight: 300;
 }
 
 .features .cta-button {
@@ -198,7 +221,7 @@
     width: 100%;
     padding: 3rem;
     background-color: white;
-    border-radius: 10px;
+    border-radius: 12px;
     box-shadow: 0 4px 20px rgba(30, 136, 229, 0.15);
     border-top: 5px solid #1E88E5;
 }
@@ -206,7 +229,7 @@
 /* Media Queries */
 @media (max-width: 1200px) {
     .feature {
-        flex-basis: calc(50% - 3rem);
+        flex-basis: calc(50% - 1rem);
     }
 }
 
