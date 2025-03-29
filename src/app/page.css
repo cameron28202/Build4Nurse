@@ -1,0 +1,269 @@
+/* Import modern Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
+.home {
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Fade-in animation keyframes */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.hidden {
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.show {
+    animation: fadeIn 1s ease forwards;
+}
+
+.hero, .stats, .features {
+    padding: 6rem 2rem;
+    text-align: center;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.hero {
+    background-color: #1E88E5; /* Medical blue */
+    color: white;
+}
+
+.hero h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    color: white;
+    letter-spacing: -0.5px;
+}
+
+.hero p {
+    font-weight: 300;
+    font-size: 1.5rem;
+    margin-bottom: 3rem;
+    color: white;
+    max-width: 800px;
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background-color: #fff;
+    color: #1E88E5;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 1px solid #f0f0f0;
+    font-size: 1.2rem;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+}
+
+.cta-button:hover {
+    background-color: #f1f1f1;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.stats {
+    background-color: #f9f9f9;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.stats .features-title {
+    color: #1E88E5;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+}
+
+.stat-container {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    max-width: 1200px;
+    margin-top: 2rem;
+}
+
+.stat-item {
+    margin: 2rem;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    width: 250px;
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 25px rgba(30, 136, 229, 0.2);
+}
+
+.stat-item h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 3.5rem;
+    color: #1E88E5;
+    margin-bottom: 1rem;
+}
+
+.stat-item p {
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.features {
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.features-title {
+    margin-bottom: 3rem;
+    font-size: 2.5rem;
+    color: #1E88E5;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+}
+
+.features-container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+    width: 100%;
+    max-width: 1400px;
+}
+
+.feature {
+    flex-basis: calc(33% - 3rem);
+    margin: 1.5rem;
+    padding: 2.5rem;
+    background-color: #f1f8fe; 
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-bottom: 4px solid #1E88E5;
+}
+
+.feature:hover, .feature.active {
+    transform: translateY(-15px);
+    box-shadow: 0 8px 20px rgba(30, 136, 229, 0.2);
+}
+
+.feature-icon {
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.feature h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 1.8rem;
+    color: #1565C0; /* Darker blue for contrast */
+    margin-bottom: 1.5rem;
+}
+
+.feature p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    font-weight: 300;
+}
+
+.features .cta-button {
+    background-color: #1E88E5;
+    color: white;
+    margin-top: 2rem;
+    font-size: 1.3rem;
+    padding: 1.2rem 2.5rem;
+}
+
+.features .cta-button:hover {
+    background-color: #1565C0;
+}
+
+/* Vitals Container Styling */
+.vitals-container {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    background-color: #f1f8fe; /* Light blue background */
+}
+
+.vitals-card {
+    max-width: 600px;
+    width: 100%;
+    padding: 3rem;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(30, 136, 229, 0.15);
+    border-top: 5px solid #1E88E5;
+}
+
+/* Media Queries */
+@media (max-width: 1200px) {
+    .feature {
+        flex-basis: calc(50% - 1rem);
+    }
+}
+
+@media (max-width: 768px) {
+    .hero, .stats, .features {
+        padding: 4rem 1.5rem;
+    }
+    
+    .hero h1 {
+        font-size: 3rem;
+    }
+    
+    .hero p {
+        font-size: 1.2rem;
+    }
+    
+    .stat-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .stat-item {
+        width: 100%;
+        max-width: 300px;
+        margin: 1rem;
+    }
+    
+    .feature {
+        flex-basis: 100%;
+        height: auto;
+        padding: 2rem;
+    }
+    
+    .vitals-card {
+        padding: 1.5rem;
+    }
+}
