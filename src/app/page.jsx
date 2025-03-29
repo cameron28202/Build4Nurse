@@ -1,20 +1,41 @@
 "use client";
 
 import { useState } from "react";
-import PatientIdInput from "@/components/PatientIdInput";
-import SubmitButton from "@/components/SubmitButton";
+import renderCurrentStep from "@/service/renderCurrentStep";
 
 export default function Home() {
-  const [patientId, setPatientId] = useState("");
-  const [error, setError] = useState("");
+  const [currentStep, setCurrentStep] = useState("patientId");
+  const [vitalsData, setVitalsData] = useState({
+    patientId: "",
+    temperature: "",
+    weight: "",
+    bloodPressure: "",
+    heartRate: "",
+  });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!patientId.trim()) {
-      setError("Please enter a valid patient ID");
-      return;
-    }
+  const [isLoading, setIsLoading] = useState(false);
 
+  const handleVitalSubmit = (vitalType, value) => {
+    setIsLoading(true);
+    
+    // Simulate API call to EPIC
+    setTimeout(() => {
+      // Update vitals data
+      setVitalsData(prev => ({
+        ...prev,
+        [vitalType]: value
+      }));
+      
+      // Move to next step
+      const steps = ["patientId", "temperature", "weight", "bloodPressure", "heartRate", "summary"];
+      const currentIndex = steps.indexOf(currentStep);
+      
+      if (currentIndex < steps.length - 1) {
+        setCurrentStep(steps[currentIndex + 1]);
+      }
+      
+      setIsLoading(false);
+    }, 1000);
   };
 
   return (
@@ -26,20 +47,14 @@ export default function Home() {
             <p className="text-gray-600">Voice-enabled documentation for nurses</p>
           </div>
           
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <PatientIdInput 
-              value={patientId}
-              onChange={(e) => setPatientId(e.target.value)}
-              error={error}
-            />
-
-            <SubmitButton 
-                isLoading={false}
-                text="Find Patient" 
-                loadingText="Searching..."
-            />
-
-          </form>
+          {/* progress bar indicator? */}
+          
+          {/* Render the current step */}
+          {renderCurrentStep({
+            currentStep,
+            handleVitalSubmit,
+            isLoading
+          })}
         </div>
       </main>
     </div>
