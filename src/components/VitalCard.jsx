@@ -31,14 +31,14 @@ export default function VitalCard({
   // Define voice commands.
   const commands = [
     {
-      command: "Clear the line",
+      command: "Clear",
       callback: () => {
         setValue("");
         resetTranscript();
       },
     },
     {
-      command: "Submit the value",
+      command: "Submit",
       callback: () => {
         submitValue();
         resetTranscript();
@@ -108,7 +108,7 @@ export default function VitalCard({
 
         <div className="mt-4">
           <p className="text-sm text-gray-500">
-            Voice Commands: "Clear the line", "Submit the value"
+            Voice Commands: "Clear", "Submit, Skip, Pause, Start"
           </p>
         </div>
 
