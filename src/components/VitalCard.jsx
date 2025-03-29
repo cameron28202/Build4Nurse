@@ -91,13 +91,6 @@ export default function VitalCard({
       return;
     }
 
-    if (lower.includes("start")) {
-      newValue = newValue.replace(/start/gi, "");
-      resetTranscript();
-      SpeechRecognition.startListening({ continuous: true });
-      return;
-    }
-
     setValue(newValue.trim());
   }, [transcript]);
 
