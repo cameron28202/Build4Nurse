@@ -18,17 +18,22 @@ export default function VitalCard({
   const [value, setValue] = useState("");
   const [error, setError] = useState("");
 
-  // Text-to-speech confirmation helper.
-  // This version will only be used on submission.
-  const speakConfirmation = (message) => {
+  // Updated speakConfirmation with an optional onEnd callback.
+  const speakConfirmation = (message, onEnd) => {
     if (typeof window !== "undefined" && window.speechSynthesis) {
       const utterance = new SpeechSynthesisUtterance(message);
+      // Ensure listening is stopped as soon as speech begins.
+      utterance.onstart = () => {
+        SpeechRecognition.stopListening();
+      };
+      if (onEnd) {
+        utterance.onend = onEnd;
+      }
       window.speechSynthesis.speak(utterance);
     }
   };
 
   // Submission logic.
-  // When submission is successful, it will speak the current metric title along with its value.
   const submitValue = () => {
     if (!value.trim()) {
       setError(`Please enter a valid ${title.toLowerCase()}`);
@@ -45,17 +50,7 @@ export default function VitalCard({
     resetTranscript
   } = useSpeechRecognition();
 
-  /**
-   * Process voice commands:
-   * - "Skip" sets the value to "-1" and submits.
-   * - "Submit" submits the current input.
-   * - "Pause" stops listening.
-   * - "Clear" clears the input.
-   * - "Start" restarts listening.
-   *
-   * Note: Only "Submit" and "Skip" lead to submission,
-   * which then triggers the text-to-speech confirmation.
-   */
+  // Process voice commands.
   useEffect(() => {
     if (!transcript) return;
 
@@ -94,7 +89,7 @@ export default function VitalCard({
     setValue(newValue.trim());
   }, [transcript]);
 
-  // --- New: Speak the title once for the current metric ---
+  // --- Speak the title once for the current metric ---
   const hasSpokenRef = useRef(false);
 
   useEffect(() => {
@@ -104,8 +99,12 @@ export default function VitalCard({
 
   useEffect(() => {
     if (!hasSpokenRef.current) {
-      // Speak the title once and set the flag to true.
-      speakConfirmation(title);
+      // Stop listening before speaking the title.
+      SpeechRecognition.stopListening();
+      // Speak the title and, when finished, start listening again.
+      speakConfirmation(title, () => {
+        SpeechRecognition.startListening({ continuous: true });
+      });
       hasSpokenRef.current = true;
     }
   }, [title]);
