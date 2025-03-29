@@ -70,10 +70,11 @@ export default function VitalCard({
       return;
     }
 
-    if (lower.includes("submit")) {
+    if (lower.includes("enter")) {
       newValue = newValue.replace(/submit/gi, "");
       setValue(newValue.trim());
       submitValue();
+      setValue("");
       resetTranscript();
       return;
     }
