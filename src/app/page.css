@@ -36,8 +36,40 @@
 }
 
 .hero {
-    background-color: #1E88E5; /* Medical blue */
+    background-color: #1E88E5; /* Fallback color */
     color: white;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+/* Hero background with tint overlay */
+.hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/nurse-background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.35; /* Adjust for desired image visibility */
+    z-index: -2;
+}
+
+/* Blue tint overlay */
+.hero::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #1E88E5;
+    opacity: 0.7; /* Adjust for desired tint intensity */
+    z-index: -1;
 }
 
 .hero h1 {
@@ -47,6 +79,8 @@
     margin-bottom: 1.5rem;
     color: white;
     letter-spacing: -0.5px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    position: relative;
 }
 
 .hero p {
@@ -55,6 +89,8 @@
     margin-bottom: 3rem;
     color: white;
     max-width: 800px;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    position: relative;
 }
 
 .cta-button {
@@ -70,6 +106,7 @@
     font-size: 1.2rem;
     cursor: pointer;
     letter-spacing: 0.5px;
+    position: relative;
 }
 
 .cta-button:hover {
