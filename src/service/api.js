@@ -1,5 +1,3 @@
-
-// LOINC vital definitions in the right order
 const vitalDefinitions = [
   { code: "8310-5", display: "Body temperature", unit: "°F" },
   { code: "8867-4", display: "Heart rate", unit: "bpm" },
@@ -58,7 +56,7 @@ const sendVital = async ({ patientId, code, display, value, unit }) => {
 };
 
 // Main function to process incoming vitals
-async function sendVitalsForPatient(patientId, vitalsArray) {
+const sendVitalsForPatient = async (patientId, vitalsArray) => {
   try {
     if (vitalsArray.length !== vitalDefinitions.length) {
         throw new Error("❌ Invalid vitals array length.");
@@ -78,9 +76,15 @@ async function sendVitalsForPatient(patientId, vitalsArray) {
     }
 
     console.log("🎯 All valid vitals sent!");
+    return { success: true, message: "All vitals submitted successfully" };
   } catch (err) {
     console.error("❌ Error:", err.message);
+    return { success: false, error: err.message };
   }
-}
+};
 
-module.exports = { sendVitalsForPatient };
+const api = {
+  sendVitalsForPatient
+};
+
+export default api;

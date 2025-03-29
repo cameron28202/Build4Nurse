@@ -11,6 +11,7 @@ const Home = () => {
     const [showVitals, setShowVitals] = useState(false);
     const [currentVital, setCurrentVital] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [apiStatus, setApiStatus] = useState({ message: "", isError: false });
     const [vitalsData, setVitalsData] = useState({
         patientId: "",
         temperature: "",
@@ -119,30 +120,74 @@ const Home = () => {
         setCurrentVital(vitals[0]);
     };
 
-    const handleVitalSubmit = (value) => {
-      // update w/ prev value
-      setVitalsData(prev => ({
-          ...prev,
-          [currentVital.id]: value
-      }));
-      
-      // update w/ next vital
-      const currentIndex = vitals.findIndex(v => v.id === currentVital.id);
-      
-      if (currentIndex < vitals.length - 1) {
-          // Move to next vital
-          setCurrentVital(vitals[currentIndex + 1]);
-      } 
-      else {
-          // All vitals completed, move to summary
-          setCurrentVital({ id: "summary", title: "Summary", instruction: "Review of recorded vitals" });
-      }
-  };
+    const handleVitalSubmit = async (value) => {
+        setIsLoading(true);
+        
+        // Update vitalsData with current value
+        setVitalsData(prev => ({
+            ...prev,
+            [currentVital.id]: value
+        }));
+        
+        // Find current vital index
+        const currentIndex = vitals.findIndex(v => v.id === currentVital.id);
+        
+        if (currentIndex < vitals.length - 1) {
+            // Move to next vital
+            setCurrentVital(vitals[currentIndex + 1]);
+            setIsLoading(false);
+        } else {
+            // This is the last vital - send data to FHIR server
+            try {
+                // Create array of vital values in the correct order for the API
+                const vitalsArray = [
+                    parseFloat(vitalsData.temperature),
+                    parseFloat(vitalsData.heartRate),
+                    parseFloat(vitalsData.respiratoryRate),
+                    parseFloat(vitalsData.systolicPressure),
+                    parseFloat(vitalsData.diastolicPressure),
+                    parseFloat(vitalsData.o2Sat), 
+                    parseFloat(value) // glucose (current value)
+                ];
+                
+                // Send data to FHIR server
+                const result = await api.sendVitalsForPatient(vitalsData.patientId, vitalsArray);
+                
+                if (result.success) {
+                    setApiStatus({ message: "Vitals submitted successfully!", isError: false });
+                } else {
+                    setApiStatus({ message: `Error: ${result.error}`, isError: true });
+                }
+            } catch (error) {
+                console.error("Error submitting vitals:", error);
+                setApiStatus({ 
+                    message: "Failed to submit vitals. Please try again.", 
+                    isError: true 
+                });
+            }
+            
+            // Move to summary regardless of API success
+            setCurrentVital({ id: "summary", title: "Summary", instruction: "Review of recorded vitals" });
+            setIsLoading(false);
+        }
+    };
 
     // Handle when user wants to go back to home from summary
     const handleBackToHome = () => {
         setShowVitals(false);
         setCurrentVital(null);
+        setApiStatus({ message: "", isError: false });
+        // Reset vitals data for next session
+        setVitalsData({
+            patientId: "",
+            temperature: "",
+            heartRate: "",
+            respiratoryRate: "",
+            systolicPressure: "",
+            diastolicPressure: "",
+            o2Sat: "",
+            glucose: ""
+        });
     };
 
     // Render summary component
@@ -150,6 +195,15 @@ const Home = () => {
         return (
             <div className="p-4">
                 <h2 className="text-xl font-semibold mb-4">Patient Vitals Summary</h2>
+                
+                {apiStatus.message && (
+                    <div className={`p-3 mb-4 rounded-md ${apiStatus.isError 
+                        ? 'bg-red-100 text-red-700 border border-red-300' 
+                        : 'bg-green-100 text-green-700 border border-green-300'}`}>
+                        {apiStatus.message}
+                    </div>
+                )}
+                
                 <div className="space-y-2">
                     <p><span className="font-medium">Patient ID:</span> {vitalsData.patientId}</p>
                     <p><span className="font-medium">Temperature:</span> {vitalsData.temperature} °F</p>
@@ -218,7 +272,7 @@ const Home = () => {
                                     placeholder={currentVital.placeholder}
                                     instruction={currentVital.instruction}
                                     onSubmit={handleVitalSubmit}
-                                    isLoading={false}
+                                    isLoading={isLoading}
                                     buttonText="Save and Continue"
                                     loadingText="Saving..."
                                 />
