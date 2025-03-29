@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import VitalCard from "@/components/VitalCard";
+import SummaryCard from '@/components/SummaryCard';
 import api from "@/service/api";
 
 import './page.css';
@@ -133,13 +134,13 @@ const Home = () => {
         const currentIndex = vitals.findIndex(v => v.id === currentVital.id);
         
         if (currentIndex < vitals.length - 1) {
-            // Move to next vital
+            // move to next vital
             setCurrentVital(vitals[currentIndex + 1]);
             setIsLoading(false);
         } else {
-            // This is the last vital - send data to FHIR server
+            // last vital? send data
             try {
-                // Create array of vital values in the correct order for the API
+                // create vitals array
                 const vitalsArray = [
                     parseFloat(vitalsData.temperature),
                     parseFloat(vitalsData.heartRate),
@@ -147,18 +148,20 @@ const Home = () => {
                     parseFloat(vitalsData.systolicPressure),
                     parseFloat(vitalsData.diastolicPressure),
                     parseFloat(vitalsData.o2Sat), 
-                    parseFloat(value) // glucose (current value)
+                    parseFloat(value) // glucose
                 ];
                 
                 // Send data to FHIR server
                 const result = await api.sendVitalsForPatient(vitalsData.patientId, vitalsArray);
                 
-                if (result.success) {
+                if(result.success){
                     setApiStatus({ message: "Vitals submitted successfully!", isError: false });
-                } else {
+                } 
+                else {
                     setApiStatus({ message: `Error: ${result.error}`, isError: true });
                 }
-            } catch (error) {
+            } 
+            catch (error) {
                 console.error("Error submitting vitals:", error);
                 setApiStatus({ 
                     message: "Failed to submit vitals. Please try again.", 
@@ -166,13 +169,13 @@ const Home = () => {
                 });
             }
             
-            // Move to summary regardless of API success
+            // move to summary regardless if corrects
             setCurrentVital({ id: "summary", title: "Summary", instruction: "Review of recorded vitals" });
             setIsLoading(false);
         }
     };
 
-    // Handle when user wants to go back to home from summary
+    // reset vitals and go back home
     const handleBackToHome = () => {
         setShowVitals(false);
         setCurrentVital(null);
@@ -188,41 +191,6 @@ const Home = () => {
             o2Sat: "",
             glucose: ""
         });
-    };
-
-    // Render summary component
-    const renderSummary = () => {
-        return (
-            <div className="p-4">
-                <h2 className="text-xl font-semibold mb-4">Patient Vitals Summary</h2>
-                
-                {apiStatus.message && (
-                    <div className={`p-3 mb-4 rounded-md ${apiStatus.isError 
-                        ? 'bg-red-100 text-red-700 border border-red-300' 
-                        : 'bg-green-100 text-green-700 border border-green-300'}`}>
-                        {apiStatus.message}
-                    </div>
-                )}
-                
-                <div className="space-y-2">
-                    <p><span className="font-medium">Patient ID:</span> {vitalsData.patientId}</p>
-                    <p><span className="font-medium">Temperature:</span> {vitalsData.temperature} °F</p>
-                    <p><span className="font-medium">Heart Rate:</span> {vitalsData.heartRate} bpm</p>
-                    <p><span className="font-medium">Respiratory Rate:</span> {vitalsData.respiratoryRate} breaths/min</p>
-                    <p><span className="font-medium">Blood Pressure:</span> {vitalsData.systolicPressure}/{vitalsData.diastolicPressure} mmHg</p>
-                    <p><span className="font-medium">O₂ Saturation:</span> {vitalsData.o2Sat}%</p>
-                    <p><span className="font-medium">Glucose:</span> {vitalsData.glucose} mg/dL</p>
-                </div>
-                <div className="mt-6">
-                    <button 
-                        onClick={handleBackToHome}
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300"
-                    >
-                        Complete and Return to Home
-                    </button>
-                </div>
-            </div>
-        );
     };
 
     return (
@@ -243,8 +211,6 @@ const Home = () => {
                                     key={index}
                                     className={`feature hidden ${activeFeature === index ? 'active' : ''}`}
                                     style={{ animationDelay: `${index * 0.2}s` }}
-                                    onMouseEnter={() => setActiveFeature(index)}
-                                    onMouseLeave={() => setActiveFeature(null)}
                                 >
                                     <div className="feature-icon">{feature.icon}</div>
                                     <h2>{feature.title}</h2>
@@ -263,7 +229,11 @@ const Home = () => {
                         <h1 className="text-center text-2xl font-bold mb-6 text-blue-600">Patient Vitals Tracking</h1>
                         
                         {currentVital && currentVital.id === "summary" ? (
-                            renderSummary()
+                            <SummaryCard 
+                                vitalsData={vitalsData}
+                                apiStatus={apiStatus}
+                                handleBackToHome={handleBackToHome}
+                            />
                         ) : (
                             currentVital && (
                                 <VitalCard
