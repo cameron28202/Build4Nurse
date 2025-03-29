@@ -18,14 +18,24 @@ export default function VitalCard({
   const [value, setValue] = useState("");
   const [error, setError] = useState("");
 
+  // Text-to-speech confirmation helper
+  const speakConfirmation = (message) => {
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      const utterance = new SpeechSynthesisUtterance(message);
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
   // Submission logic
   const submitValue = () => {
     if (!value.trim()) {
       setError(`Please enter a valid ${title.toLowerCase()}`);
+      speakConfirmation(`Error: Please enter a valid ${title.toLowerCase()}`);
       return;
     }
     setError("");
     onSubmit(value);
+    speakConfirmation(`${title} submitted successfully`);
   };
 
   const {
@@ -36,25 +46,27 @@ export default function VitalCard({
   } = useSpeechRecognition();
 
   /**
-   * 1) Check the transcript for any command words.
-   * 2) If a command word is found, do the associated action.
-   * 3) Remove that command word from the text so it doesn't appear in the input.
-   * 4) "Return" after certain commands so they don't conflict with each other.
+   * Process voice commands:
+   * - "Skip" sets the value to "-1", submits, and speaks confirmation.
+   * - "Submit" submits the current input.
+   * - "Pause" stops listening and confirms pausing.
+   * - "Clear" clears the input and confirms the action.
+   * - "Start" restarts listening and confirms.
    */
   useEffect(() => {
     if (!transcript) return;
 
-    // We'll remove command words from newValue before updating the input.
     let newValue = transcript;
     const lower = transcript.toLowerCase();
 
-    // "Skip" -> Set the value to "-1" and submit
+    // "Skip" -> Set value to "-1" and submit
     if (lower.includes("skip")) {
       newValue = newValue.replace(/skip/gi, "");
       setValue("-1");
+      speakConfirmation(`${title} skipped`);
       submitValue();
       resetTranscript();
-      return; // Exit so we don't process multiple commands in one phrase
+      return;
     }
 
     // "Submit" -> Submit the current text
@@ -70,7 +82,8 @@ export default function VitalCard({
     if (lower.includes("pause")) {
       newValue = newValue.replace(/pause/gi, "");
       SpeechRecognition.stopListening();
-      // We do NOT return here, so the final cleaned text is set below.
+      speakConfirmation(`Voice recognition paused`);
+      // Continue processing to update input if needed.
     }
 
     // "Clear" -> Clear the input
@@ -78,6 +91,7 @@ export default function VitalCard({
       newValue = newValue.replace(/clear/gi, "");
       setValue("");
       resetTranscript();
+      speakConfirmation(`Cleared input`);
       return;
     }
 
@@ -86,21 +100,24 @@ export default function VitalCard({
       newValue = newValue.replace(/start/gi, "");
       resetTranscript();
       SpeechRecognition.startListening({ continuous: true });
+      speakConfirmation(`Voice recognition restarted`);
       return;
     }
 
-    // If no command (or after removing "pause"), update the input text.
+    // If no command (or after handling "pause"), update the input text.
     setValue(newValue.trim());
   }, [transcript]);
 
-  // Manual start/stop
+  // Manual start/stop handlers
   const handleStartRecording = () => {
     resetTranscript();
     SpeechRecognition.startListening({ continuous: true });
+    speakConfirmation(`Started recording`);
   };
 
   const handleStopRecording = () => {
     SpeechRecognition.stopListening();
+    speakConfirmation(`Stopped recording`);
   };
 
   // Form submission
