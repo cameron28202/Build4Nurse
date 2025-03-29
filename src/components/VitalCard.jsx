@@ -164,7 +164,7 @@ export default function VitalCard({
 
         <div className="mt-4">
           <p className="text-sm text-gray-500">
-            Voice Commands: "Clear", "Submit", "Skip", "Pause", "Start"
+            Voice Commands: "Clear", "Enter", "Skip", "Pause"
           </p>
         </div>
 
