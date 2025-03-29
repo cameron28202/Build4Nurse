@@ -2,13 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import VitalCard from "@/components/VitalCard";
+import api from "@/service/api";
+
 import './page.css';
 
 const Home = () => {
     const [activeFeature, setActiveFeature] = useState(null);
     const [showVitals, setShowVitals] = useState(false);
     const [currentVital, setCurrentVital] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
     const [vitalsData, setVitalsData] = useState({
         patientId: "",
         temperature: "",
@@ -118,28 +119,24 @@ const Home = () => {
     };
 
     const handleVitalSubmit = (value) => {
-        setIsLoading(true);
-        
-        // Simulate API call
-        setTimeout(() => {
-            // Update vitals data
-            setVitalsData(prev => ({
-                ...prev,
-                [currentVital.id]: value
-            }));
-            
-            // Find next vital
-            const currentIndex = vitals.findIndex(v => v.id === currentVital.id);
-            if (currentIndex < vitals.length - 1) {
-                setCurrentVital(vitals[currentIndex + 1]);
-            } else {
-                // Show summary
-                setCurrentVital({ id: "summary", title: "Summary", instruction: "Review of recorded vitals" });
-            }
-            
-            setIsLoading(false);
-        }, 1000);
-    };
+      // update w/ prev value
+      setVitalsData(prev => ({
+          ...prev,
+          [currentVital.id]: value
+      }));
+      
+      // update w/ next vital
+      const currentIndex = vitals.findIndex(v => v.id === currentVital.id);
+      
+      if (currentIndex < vitals.length - 1) {
+          // Move to next vital
+          setCurrentVital(vitals[currentIndex + 1]);
+      } 
+      else {
+          // All vitals completed, move to summary
+          setCurrentVital({ id: "summary", title: "Summary", instruction: "Review of recorded vitals" });
+      }
+  };
 
     // Handle when user wants to go back to home from summary
     const handleBackToHome = () => {
