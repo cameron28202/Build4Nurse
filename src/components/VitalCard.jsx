@@ -92,14 +92,14 @@ export default function VitalCard({
             <button
               type="button"
               onClick={handleStartRecording}
-              className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded"
+              className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
             >
               {listening ? "Recording..." : "Start Recording"}
             </button>
             <button
               type="button"
               onClick={handleStopRecording}
-              className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded"
+              className="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded"
             >
               Stop Recording
             </button>
