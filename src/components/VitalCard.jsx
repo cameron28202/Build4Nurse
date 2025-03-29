@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognition";
 import InputContainer from "@/components/InputContainer";
 import SubmitButton from "@/components/SubmitButton";
@@ -18,7 +18,8 @@ export default function VitalCard({
   const [value, setValue] = useState("");
   const [error, setError] = useState("");
 
-  // Text-to-speech confirmation helper
+  // Text-to-speech confirmation helper.
+  // This version will only be used on submission.
   const speakConfirmation = (message) => {
     if (typeof window !== "undefined" && window.speechSynthesis) {
       const utterance = new SpeechSynthesisUtterance(message);
@@ -26,16 +27,15 @@ export default function VitalCard({
     }
   };
 
-  // Submission logic
+  // Submission logic.
+  // When submission is successful, it will speak the current metric title along with its value.
   const submitValue = () => {
     if (!value.trim()) {
       setError(`Please enter a valid ${title.toLowerCase()}`);
-      speakConfirmation(`Error: Please enter a valid ${title.toLowerCase()}`);
       return;
     }
     setError("");
     onSubmit(value);
-    speakConfirmation(`${title} submitted successfully`);
   };
 
   const {
@@ -47,11 +47,14 @@ export default function VitalCard({
 
   /**
    * Process voice commands:
-   * - "Skip" sets the value to "-1", submits, and speaks confirmation.
+   * - "Skip" sets the value to "-1" and submits.
    * - "Submit" submits the current input.
-   * - "Pause" stops listening and confirms pausing.
-   * - "Clear" clears the input and confirms the action.
-   * - "Start" restarts listening and confirms.
+   * - "Pause" stops listening.
+   * - "Clear" clears the input.
+   * - "Start" restarts listening.
+   *
+   * Note: Only "Submit" and "Skip" lead to submission,
+   * which then triggers the text-to-speech confirmation.
    */
   useEffect(() => {
     if (!transcript) return;
@@ -59,17 +62,14 @@ export default function VitalCard({
     let newValue = transcript;
     const lower = transcript.toLowerCase();
 
-    // "Skip" -> Set value to "-1" and submit
     if (lower.includes("skip")) {
       newValue = newValue.replace(/skip/gi, "");
       setValue("-1");
-      speakConfirmation(`${title} skipped`);
       submitValue();
       resetTranscript();
       return;
     }
 
-    // "Submit" -> Submit the current text
     if (lower.includes("submit")) {
       newValue = newValue.replace(/submit/gi, "");
       setValue(newValue.trim());
@@ -78,49 +78,55 @@ export default function VitalCard({
       return;
     }
 
-    // "Pause" -> Stop listening
     if (lower.includes("pause")) {
       newValue = newValue.replace(/pause/gi, "");
       SpeechRecognition.stopListening();
-      speakConfirmation(`Voice recognition paused`);
-      // Continue processing to update input if needed.
     }
 
-    // "Clear" -> Clear the input
     if (lower.includes("clear")) {
       newValue = newValue.replace(/clear/gi, "");
       setValue("");
       resetTranscript();
-      speakConfirmation(`Cleared input`);
       return;
     }
 
-    // "Start" -> Start listening again
     if (lower.includes("start")) {
       newValue = newValue.replace(/start/gi, "");
       resetTranscript();
       SpeechRecognition.startListening({ continuous: true });
-      speakConfirmation(`Voice recognition restarted`);
       return;
     }
 
-    // If no command (or after handling "pause"), update the input text.
     setValue(newValue.trim());
   }, [transcript]);
 
-  // Manual start/stop handlers
+  // --- New: Speak the title once for the current metric ---
+  const hasSpokenRef = useRef(false);
+
+  useEffect(() => {
+    // Reset the flag when the title changes (i.e. a new metric)
+    hasSpokenRef.current = false;
+  }, [title]);
+
+  useEffect(() => {
+    if (!hasSpokenRef.current) {
+      // Speak the title once and set the flag to true.
+      speakConfirmation(title);
+      hasSpokenRef.current = true;
+    }
+  }, [title]);
+
+  // Manual start/stop handlers.
   const handleStartRecording = () => {
     resetTranscript();
     SpeechRecognition.startListening({ continuous: true });
-    speakConfirmation(`Started recording`);
   };
 
   const handleStopRecording = () => {
     SpeechRecognition.stopListening();
-    speakConfirmation(`Stopped recording`);
   };
 
-  // Form submission
+  // Form submission.
   const handleSubmit = (e) => {
     e.preventDefault();
     submitValue();
